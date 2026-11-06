@@ -268,4 +268,61 @@ $('#lgb').onclick=async()=>{const n=$('#lgn').value.trim();if(!n)return toast('I
 select(T[0]);initCloud();
 </script>
 </body>
-</html>
+<script type="module">
+  // 1. Import library Firebase App dan Realtime Database
+  import { initializeApp } from "https://gstatic.com";
+  import { getDatabase, ref, push } from "https://gstatic.com";
+
+  // 2. Firebase Configuration milik Anda
+  const firebaseConfig = {
+    apiKey: "AIzaSyB_P-Lkpu_G_JIUMI2H6FkP2u6YIaBv4",
+    authDomain: "://firebaseapp.com",
+    databaseURL: "https://firebasedatabase.app",
+    projectId: "praktek-livechat",
+    storageBucket: "://appspot.com",
+    messagingSenderId: "382063700387",
+    appId: "1:382063700387:web:55f00bdf7dbec42c72d216"
+  };
+
+  // Inisialisasi Firebase & Database
+  const app = initializeApp(firebaseConfig);
+  const database = getDatabase(app);
+
+  // 3. Menghubungkan ke logika website Anda
+  // Berdasarkan baris 267 di kode Anda, fungsi initCloud() dipanggil saat tombol login diklik.
+  // Kita buat fungsi simpan data otomatis saat siswa selesai/mengunduh rekap.
+  
+  window.initCloud = function() {
+    console.log("Firebase Cloud siap digunakan!");
+  };
+
+  // Otomatis mendeteksi saat siswa mengklik tombol "Unduh rekap (CSV)"
+  document.addEventListener('click', function(e) {
+    if (e.target && (e.target.textContent.includes('Unduh rekap') || e.target.id === 'btn-rekap')) {
+      
+      // Mengambil nama dari variabel global ME.name yang ada di kode Anda (baris 267)
+      let namaSiswa = (typeof ME !== 'undefined' && ME.name) ? ME.name : "Anonim";
+      
+      // Mengambil semua teks obrolan yang ada di layar
+      let riwayatChat = "";
+      const chatBox = document.querySelector('.chat-container') || document.body;
+      if (chatBox) {
+        riwayatChat = chatBox.innerText || chatBox.textContent;
+      }
+
+      // Kirim data ke Cloud Firebase
+      const dbRef = ref(database, 'riwayat_praktik');
+      push(dbRef, {
+        nama: namaSiswa,
+        chat: riwayatChat,
+        waktuSelesai: new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" })
+      })
+      .then(() => {
+        alert("Riwayat praktik Anda juga sudah otomatis tersimpan di Cloud Guru!");
+      })
+      .catch((error) => {
+        console.error("Gagal menyimpan ke Cloud:", error);
+      });
+    }
+  });
+</script>
