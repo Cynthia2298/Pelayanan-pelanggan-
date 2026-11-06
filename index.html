@@ -268,7 +268,7 @@ $('#lgb').onclick=async()=>{const n=$('#lgn').value.trim();if(!n)return toast('I
 select(T[0]);initCloud();
 </script>
 </body>
-  <script type="module">
+ <script type="module">
   // 1. Import library Firebase App dan Realtime Database
   import { initializeApp } from "https://gstatic.com";
   import { getDatabase, ref, push } from "https://gstatic.com";
@@ -288,37 +288,34 @@ select(T[0]);initCloud();
   const app = initializeApp(firebaseConfig);
   const database = getDatabase(app);
 
-  // Memicu fungsi bawaan template agar mendeteksi status Cloud Aktif
+  // Paksa fungsi initCloud agar kode utama tidak error
   window.initCloud = function() {
-    console.log("Firebase Cloud terkoneksi!");
-    // Mencari elemen teks status jika ada untuk mengubah tulisan "mode lokal"
-    const statusEl = document.querySelector('span[style*="color: red"]') || document.querySelector('span[style*="color:red"]');
-    if (statusEl && statusEl.textContent.includes('mode lokal')) {
-      statusEl.textContent = "mode cloud: aktif otomatis";
-      statusEl.style.color = "green";
-    }
+    console.log("Firebase bypass aktif.");
   };
 
-  // Jalankan initCloud secara otomatis saat skrip termuat
-  if (typeof window.initCloud === 'function') {
-    window.initCloud();
-  }
-
-  // Otomatis mendeteksi saat siswa mengklik tombol "Unduh riwayat"
+  // KODE PEMAKSA (Mencegat klik tombol sebelum sistem lokal membatalkannya)
   document.addEventListener('click', function(e) {
-    if (e.target && (e.target.textContent.includes('Unduh riwayat') || e.target.id === 'btn-rekap')) {
+    // Cari apakah elemen yang diklik adalah tombol Unduh Riwayat
+    const isTombolUnduh = e.target && (e.target.textContent.includes('Unduh riwayat') || e.target.closest('button')?.textContent.includes('Unduh riwayat'));
+    
+    if (isTombolUnduh) {
+      console.log("Tombol Unduh Riwayat terdeteksi! Memaksa kirim ke Firebase Cloud...");
       
-      // Mengambil nama dari variabel global ME.name yang ada di kode Anda
-      let namaSiswa = (typeof ME !== 'undefined' && ME.name) ? ME.name : "Anonim";
-      
-      // Mengambil semua teks obrolan/komplain yang ada di layar
-      let riwayatChat = "";
-      const chatBox = document.body; 
-      if (chatBox) {
-        riwayatChat = chatBox.innerText || chatBox.textContent;
+      // Ambil nama dari variabel global ME.name atau ambil langsung dari teks header jika ada
+      let namaSiswa = "Anonim";
+      if (typeof ME !== 'undefined' && ME.name) {
+        namaSiswa = ME.name;
+      } else {
+        // Alternatif jika ME tidak terbaca, ambil dari header "Cynthia Lauren - XII MPK 2"
+        const headerTeks = document.body.innerText || "";
+        const matchNama = headerTeks.match(/([A-Za-z\s]+)\s·\s[X|I|V]+/);
+        if (matchNama && matchNama[1]) namaSiswa = matchNama[1].trim();
       }
+      
+      // Ambil seluruh teks obrolan/komplain yang ada di layar saat itu
+      let riwayatChat = document.body.innerText || document.body.textContent;
 
-      // Kirim data ke Cloud Firebase
+      // Kirim data ke Cloud Firebase secara paksa
       const dbRef = ref(database, 'riwayat_praktik');
       push(dbRef, {
         nama: namaSiswa,
@@ -326,11 +323,11 @@ select(T[0]);initCloud();
         waktuSelesai: new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" })
       })
       .then(() => {
-        alert("Riwayat praktik Anda juga sudah otomatis tersimpan di Cloud Guru!");
+        alert("Bypass Sukses! Riwayat praktik Anda BERHASIL dipaksa masuk ke Cloud Firebase Guru.");
       })
       .catch((error) => {
-        console.error("Gagal menyimpan ke Cloud:", error);
+        alert("Gagal kirim Cloud: " + error.message);
       });
     }
-  });
+  }, true); // Parameter 'true' ini berfungsi untuk mencurangi sistem lokal web Anda
 </script>
