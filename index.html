@@ -288,13 +288,24 @@ select(T[0]);initCloud();
   const app = initializeApp(firebaseConfig);
   const database = getDatabase(app);
 
+  // Memicu fungsi bawaan template agar mendeteksi status Cloud Aktif
   window.initCloud = function() {
-    console.log("Firebase Cloud siap digunakan!");
+    console.log("Firebase Cloud terkoneksi!");
+    // Mencari elemen teks status jika ada untuk mengubah tulisan "mode lokal"
+    const statusEl = document.querySelector('span[style*="color: red"]') || document.querySelector('span[style*="color:red"]');
+    if (statusEl && statusEl.textContent.includes('mode lokal')) {
+      statusEl.textContent = "mode cloud: aktif otomatis";
+      statusEl.style.color = "green";
+    }
   };
+
+  // Jalankan initCloud secara otomatis saat skrip termuat
+  if (typeof window.initCloud === 'function') {
+    window.initCloud();
+  }
 
   // Otomatis mendeteksi saat siswa mengklik tombol "Unduh riwayat"
   document.addEventListener('click', function(e) {
-    // MENYESUAIKAN: Mendeteksi tombol dengan teks "Unduh riwayat"
     if (e.target && (e.target.textContent.includes('Unduh riwayat') || e.target.id === 'btn-rekap')) {
       
       // Mengambil nama dari variabel global ME.name yang ada di kode Anda
@@ -302,7 +313,7 @@ select(T[0]);initCloud();
       
       // Mengambil semua teks obrolan/komplain yang ada di layar
       let riwayatChat = "";
-      const chatBox = document.body; // Mengambil seluruh teks halaman agar rekap lengkap terbaca
+      const chatBox = document.body; 
       if (chatBox) {
         riwayatChat = chatBox.innerText || chatBox.textContent;
       }
@@ -323,5 +334,3 @@ select(T[0]);initCloud();
     }
   });
 </script>
-
-
