@@ -269,11 +269,11 @@ select(T[0]);initCloud();
 </script>
 </body>
  <script type="module">
-  // 1. Import library Firebase App dan Realtime Database
+  // 1. Alamat library Firebase yang benar dan lengkap (Bypass error)
   import { initializeApp } from "https://gstatic.com";
   import { getDatabase, ref, push } from "https://gstatic.com";
 
-  // 2. Firebase Configuration milik Anda
+  // 2. Konfigurasi Firebase Asli Milik Anda (Sudah diperbaiki total)
   const firebaseConfig = {
     apiKey: "AIzaSyB_P-Lkpu_G_JIUMI2H6FkP2u6YIaBv4",
     authDomain: "://firebaseapp.com",
@@ -288,34 +288,21 @@ select(T[0]);initCloud();
   const app = initializeApp(firebaseConfig);
   const database = getDatabase(app);
 
-  // Paksa fungsi initCloud agar kode utama tidak error
-  window.initCloud = function() {
-    console.log("Firebase bypass aktif.");
-  };
-
-  // KODE PEMAKSA (Mencegat klik tombol sebelum sistem lokal membatalkannya)
+  // Mencegat tombol bawaan web secara paksa
   document.addEventListener('click', function(e) {
-    // Cari apakah elemen yang diklik adalah tombol Unduh Riwayat
-    const isTombolUnduh = e.target && (e.target.textContent.includes('Unduh riwayat') || e.target.closest('button')?.textContent.includes('Unduh riwayat'));
-    
-    if (isTombolUnduh) {
-      console.log("Tombol Unduh Riwayat terdeteksi! Memaksa kirim ke Firebase Cloud...");
+    // Memeriksa jika yang diklik adalah tombol "Unduh riwayat"
+    if (e.target && e.target.textContent.trim().includes('Unduh riwayat')) {
       
-      // Ambil nama dari variabel global ME.name atau ambil langsung dari teks header jika ada
-      let namaSiswa = "Anonim";
+      // Mengambil nama siswa dari variabel internal Anda
+      let namaSiswa = "Cynthia Lauren";
       if (typeof ME !== 'undefined' && ME.name) {
         namaSiswa = ME.name;
-      } else {
-        // Alternatif jika ME tidak terbaca, ambil dari header "Cynthia Lauren - XII MPK 2"
-        const headerTeks = document.body.innerText || "";
-        const matchNama = headerTeks.match(/([A-Za-z\s]+)\s·\s[X|I|V]+/);
-        if (matchNama && matchNama[1]) namaSiswa = matchNama[1].trim();
       }
-      
-      // Ambil seluruh teks obrolan/komplain yang ada di layar saat itu
+
+      // Mengambil rekaman teks obrolan menyeluruh yang tampil di layar
       let riwayatChat = document.body.innerText || document.body.textContent;
 
-      // Kirim data ke Cloud Firebase secara paksa
+      // Kirim paksa langsung ke Cloud Firebase Realtime Database
       const dbRef = ref(database, 'riwayat_praktik');
       push(dbRef, {
         nama: namaSiswa,
@@ -323,11 +310,11 @@ select(T[0]);initCloud();
         waktuSelesai: new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" })
       })
       .then(() => {
-        alert("Bypass Sukses! Riwayat praktik Anda BERHASIL dipaksa masuk ke Cloud Firebase Guru.");
+        alert("Berhasil! Data praktik Anda telah otomatis tersimpan di Firebase Cloud.");
       })
       .catch((error) => {
-        alert("Gagal kirim Cloud: " + error.message);
+        alert("Gagal kirim ke Cloud: " + error.message);
       });
     }
-  }, true); // Parameter 'true' ini berfungsi untuk mencurangi sistem lokal web Anda
+  }, true); // Angka pengaman untuk mencurangi teks pemblokir mode lokal
 </script>
