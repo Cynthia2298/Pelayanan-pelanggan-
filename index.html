@@ -268,7 +268,7 @@ $('#lgb').onclick=async()=>{const n=$('#lgn').value.trim();if(!n)return toast('I
 select(T[0]);initCloud();
 </script>
 </body>
-<script type="module">
+  <script type="module">
   // 1. Import library Firebase App dan Realtime Database
   import { initializeApp } from "https://gstatic.com";
   import { getDatabase, ref, push } from "https://gstatic.com";
@@ -288,24 +288,21 @@ select(T[0]);initCloud();
   const app = initializeApp(firebaseConfig);
   const database = getDatabase(app);
 
-  // 3. Menghubungkan ke logika website Anda
-  // Berdasarkan baris 267 di kode Anda, fungsi initCloud() dipanggil saat tombol login diklik.
-  // Kita buat fungsi simpan data otomatis saat siswa selesai/mengunduh rekap.
-  
   window.initCloud = function() {
     console.log("Firebase Cloud siap digunakan!");
   };
 
-  // Otomatis mendeteksi saat siswa mengklik tombol "Unduh rekap (CSV)"
+  // Otomatis mendeteksi saat siswa mengklik tombol "Unduh riwayat"
   document.addEventListener('click', function(e) {
-    if (e.target && (e.target.textContent.includes('Unduh rekap') || e.target.id === 'btn-rekap')) {
+    // MENYESUAIKAN: Mendeteksi tombol dengan teks "Unduh riwayat"
+    if (e.target && (e.target.textContent.includes('Unduh riwayat') || e.target.id === 'btn-rekap')) {
       
-      // Mengambil nama dari variabel global ME.name yang ada di kode Anda (baris 267)
+      // Mengambil nama dari variabel global ME.name yang ada di kode Anda
       let namaSiswa = (typeof ME !== 'undefined' && ME.name) ? ME.name : "Anonim";
       
-      // Mengambil semua teks obrolan yang ada di layar
+      // Mengambil semua teks obrolan/komplain yang ada di layar
       let riwayatChat = "";
-      const chatBox = document.querySelector('.chat-container') || document.body;
+      const chatBox = document.body; // Mengambil seluruh teks halaman agar rekap lengkap terbaca
       if (chatBox) {
         riwayatChat = chatBox.innerText || chatBox.textContent;
       }
@@ -326,3 +323,5 @@ select(T[0]);initCloud();
     }
   });
 </script>
+
+
